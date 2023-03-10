@@ -1,4 +1,4 @@
-{% extends "admin/base.html" %}
+{% extends "base_template/base.html" %}
 
 {% block title %}
   {{ title }}
@@ -10,10 +10,6 @@
   {% endblock %}
 {% endif %}
 
-
-{% block toolbar %}
-  {% include "dynamic_listing/_toolbar.html" %}
-{% endblock %}
 
 {% block content %}
   <form data-toggle="filters">
