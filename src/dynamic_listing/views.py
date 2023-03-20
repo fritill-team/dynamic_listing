@@ -46,7 +46,6 @@ class BaseList(MultipleObjectMixin):
     factory = False
     has_bulk_actions = False
 
-
     def __init__(self, *args, **kwargs):
         source = string.ascii_letters + string.digits
         self.id = ''.join((random.choice(source) for i in range(8)))

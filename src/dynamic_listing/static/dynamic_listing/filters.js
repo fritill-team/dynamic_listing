@@ -4,10 +4,10 @@ var addFiltersToDynamicListingApp = function () {
 
   function submit(form) {
     var data = Array.from(new FormData(form))
-        .filter(function ([k, v]) {
-          return v
-        }),
-      params = new URLSearchParams(data)
+            .filter(function ([k, v]) {
+              return v
+            }),
+        params = new URLSearchParams(data)
 
     location.href = location.origin + location.pathname + "?" + params.toString()
   }
@@ -15,7 +15,7 @@ var addFiltersToDynamicListingApp = function () {
   function initDateRangeFilters() {
     $('[data-date-range-filter="true"]').daterangepicker({}, function (start, end) {
       var $from = this.element.siblings(`[data-range-from="${this.element.data('name')}"]`),
-        $to = this.element.siblings(`[data-range-to="${this.element.data('name')}"]`)
+          $to = this.element.siblings(`[data-range-to="${this.element.data('name')}"]`)
 
       $from.val(start.format('MM/DD/YYYY'))
       $to.val(end.format('MM/DD/YYYY'))
@@ -27,17 +27,24 @@ var addFiltersToDynamicListingApp = function () {
     initDateRangeFilters()
 
     $(document)
-      .on('change', '[data-instant-filter="true"]', function (e) {
-        submit($(this).closest('form')[0])
-      })
-      .on('submit', '[data-toggle="filters"]', function (e) {
-        e.preventDefault()
-        submit(this)
-      })
-      .on('click', '[data-reset-filters="true"]', function (e) {
-        e.preventDefault()
-        location.href = location.origin + location.pathname
-      })
+        .on('change', '[data-instant-filter="true"]', function (e) {
+          submit($(this).closest('form')[0])
+        })
+        .on('submit', '[data-toggle="filters"]', function (e) {
+          e.preventDefault()
+          submit(this)
+        })
+        .on('click', '[data-reset-filters="true"]', function (e) {
+          e.preventDefault()
+          location.href = location.origin + location.pathname
+        })
+        .on('keyup', '[data-submit-filter-by-keycode]', function (e) {
+          var key = $(this).data('submit-filter-by-keycode')
+          if (key === e.keyCode) {
+            submit($(this).closest('form')[0])
+          }
+        })
+
   }
 
 
