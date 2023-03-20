@@ -45,7 +45,7 @@ class BaseList(MultipleObjectMixin):
     header_template_name = None
     factory = False
     has_bulk_actions = False
-    media = {"css": [], 'js': []}
+
 
     def __init__(self, *args, **kwargs):
         source = string.ascii_letters + string.digits
@@ -53,6 +53,8 @@ class BaseList(MultipleObjectMixin):
 
         if self.extra_context is None:
             self.extra_context = {}
+
+        self.media = {"css": [], 'js': []}
 
         super(BaseList, self).__init__(*args, **kwargs)
 
