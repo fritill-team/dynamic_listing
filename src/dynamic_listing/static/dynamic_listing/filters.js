@@ -38,11 +38,8 @@ var addFiltersToDynamicListingApp = function () {
           e.preventDefault()
           location.href = location.origin + location.pathname
         })
-        .on('keyup', '[data-submit-filter-by-keycode]', function (e) {
-          var key = $(this).data('submit-filter-by-keycode')
-          if (key === e.keyCode) {
-            submit($(this).closest('form')[0])
-          }
+        .on('search', 'input[type="search"]', function (e) {
+          submit($(this).closest('form')[0])
         })
 
   }
