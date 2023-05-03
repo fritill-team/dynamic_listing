@@ -1,6 +1,6 @@
 import django_filters
 from django.forms.utils import pretty_name
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 from django_filters import BaseInFilter, NumberFilter
 
 
