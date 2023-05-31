@@ -71,7 +71,7 @@ class BaseList(MultipleObjectMixin):
         context = super(BaseList, self).get_context_data(*args, **kwargs)
         context['request'] = self.request
         context['list_id'] = self.id
-        context['listing_actions'] = self.get_listing_actions()
+        context['actions'] = self.get_listing_actions()
         context['filter'] = self.filterset_renderer
         context['listing_type'] = self.listing_type
         context['has_bulk_actions'] = self.has_bulk_actions
