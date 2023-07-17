@@ -133,7 +133,7 @@ class DynamicTable(BaseList):
 
     def get_context_data(self, *args, **kwargs):
         context = super(DynamicTable, self).get_context_data(*args, **kwargs)
-        context['columns'] = self.get_table_columns()
+        context['columns'] = self.process_table_columns()
         context['load_rows_from_template'] = self.load_rows_from_template
         if self.load_rows_from_template:
             context['row_template_name'] = self.row_template_name
@@ -153,7 +153,7 @@ class DynamicTable(BaseList):
 
     def _load_object_row(self, obj):
         row = []
-        for column_name, text in self.table_columns:
+        for column_name, text in self.get_table_columns():
             method = "load_{}".format(column_name)
             if hasattr(self, method) and callable(getattr(self, method)):
                 call = getattr(self, method)
@@ -162,11 +162,14 @@ class DynamicTable(BaseList):
                 row.append(mark_safe('<td>{}</td>'.format(getattr(obj, column_name))))
         return row
 
-    def get_table_columns(self):
+    def process_table_columns(self):
         columns = []
-        for column in self.table_columns:
+        for column in self.get_table_columns():
             columns.append((column[0], column[1], column[2] if len(column) > 2 else ''))
         return columns
+
+    def get_table_columns(self):
+        return self.table_columns
 
 
 class DynamicGrid(BaseList):
