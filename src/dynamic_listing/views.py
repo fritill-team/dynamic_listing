@@ -62,10 +62,19 @@ class BaseList(MultipleObjectMixin):
 
     def get_queryset(self):
         queryset = super(BaseList, self).get_queryset()
-        if self.filterset_class:
+        if self.get_filterset_class():
             filters, self.filterset_renderer = self.get_filter(queryset)
             queryset = filters.qs
         return queryset
+
+    def get_filterset_class(self):
+        return self.filterset_class
+
+    def get_filter(self, queryset):
+        if self.get_filterset_class():
+            filters = self.get_filterset_class()(self.request.GET, queryset)
+            return filters, filters.get_renderer
+        return None, None
 
     def get_context_data(self, *args, **kwargs):
         context = super(BaseList, self).get_context_data(*args, **kwargs)
@@ -111,12 +120,6 @@ class BaseList(MultipleObjectMixin):
         for item in self.media['css']:
             css += '<link href="{}">'.format(static(item))
         return css
-
-    def get_filter(self, queryset):
-        if self.filterset_class:
-            filters = self.filterset_class(self.request.GET, queryset)
-            return filters, filters.get_renderer
-        return None, None
 
     def render(self):
         return mark_safe(render_to_string(self.listing_template_name, self.get_context_data()))
