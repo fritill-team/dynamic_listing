@@ -5,11 +5,18 @@
 {% endblock %}
 
 {% if not factory and media %}
-  {% block styles %}
+  {% block scripts %}
     {{ media }}
   {% endblock %}
 {% endif %}
 
+{% if modals_template_name %}
+  {% block modals %}
+    {% if modals_template_name %}
+      {% include modals_template_name %}
+    {% endif %}
+  {% endblock %}
+{% endif %}
 
 {% block content %}
   <form data-toggle="filters">

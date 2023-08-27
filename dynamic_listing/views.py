@@ -8,18 +8,6 @@ from django.views.generic import ListView
 from django.views.generic.list import MultipleObjectMixin
 from django_filters.views import FilterView
 
-"""
-    - listing types: table, list, grid
-    - filters: side_filters, search
-    - statistics: 
-    - bulk actions: 
-    - charts: 
-    - actions: 
-    - breadcrumb:
-    - title: 
-    - sorting:
-"""
-
 
 class DynamicListInit:
     def __init__(self, request=None, queryset=None, *args, **kwargs):
@@ -37,7 +25,6 @@ class BaseList(MultipleObjectMixin):
     model = None
     paginate_by = 10
     filterset_class = None
-    filterset_renderer = None
     listing_actions = None
     modals_template_name = None
     load_actions_from_template = False
@@ -49,7 +36,7 @@ class BaseList(MultipleObjectMixin):
     def __init__(self, *args, **kwargs):
         source = string.ascii_letters + string.digits
         self.id = ''.join((random.choice(source) for i in range(8)))
-
+        self.filterset_renderer = None
         if self.extra_context is None:
             self.extra_context = {}
 
@@ -60,9 +47,13 @@ class BaseList(MultipleObjectMixin):
     def __str__(self):
         return self.render()
 
+    def check_filterset_class(self):
+        filterset_class = self.get_filterset_class()
+        return filterset_class and hasattr(filterset_class, 'filterset_renderer')
+
     def get_queryset(self):
         queryset = super(BaseList, self).get_queryset()
-        if self.get_filterset_class():
+        if self.check_filterset_class():
             filters, self.filterset_renderer = self.get_filter(queryset)
             queryset = filters.qs
         return queryset
@@ -71,7 +62,7 @@ class BaseList(MultipleObjectMixin):
         return self.filterset_class
 
     def get_filter(self, queryset):
-        if self.get_filterset_class():
+        if self.check_filterset_class():
             filters = self.get_filterset_class()(self.request.GET, queryset)
             return filters, filters.get_renderer
         return None, None

@@ -1,6 +1,6 @@
 import django_filters
 
-from dynamic_listing.filters.filters import OrderingFilter, NumberInFilter
+from .filters import OrderingFilter, NumberInFilter
 
 
 class FilterFieldRenderer:

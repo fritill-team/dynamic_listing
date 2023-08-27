@@ -8,6 +8,12 @@ from .filters import *
 
 class FilterSet(django_filters.FilterSet):
     filterset_types = {}
+    fields_map = {
+        "top_left": [],
+        "top_right": [],
+        "top_body": [],
+        "side": []
+    }
     force_visibility = []
     filterset_renderer = FilterRenderer
 
@@ -38,8 +44,15 @@ class FilterSet(django_filters.FilterSet):
                       '{}'.format(_(" & Up"))))
     )
 
+    def __init__(self, data=None, *args, **kwargs):
+        if data:
+            data.pop('page', None)
+            data.pop('per_page', None)
+
+        super().__init__(data, *args, **kwargs)
+
     def get_renderer(self):
-        return self.filterset_renderer(self, self.get_filterset_types()).as_fields()
+        return self.filterset_renderer(self, self.get_filterset_types(), self.fields_map).as_fields()
 
     def get_filterset_types(self):
         return self.filterset_types

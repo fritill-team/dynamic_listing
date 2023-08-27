@@ -1,5 +1,5 @@
 """
-ASGI config for dynamic_listing project.
+ASGI config for dl project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'dynamic_listing.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'dl.settings')
 
 application = get_asgi_application()

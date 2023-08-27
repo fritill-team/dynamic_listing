@@ -24,6 +24,7 @@ class Blog(models.Model):
     author = models.ForeignKey(UserModel, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     tags = models.ManyToManyField(Tag)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.title
