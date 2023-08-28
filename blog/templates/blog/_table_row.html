@@ -9,5 +9,7 @@
 <td class="text-center">{{ item.category.name }}</td>
 
 <td class="text-center">
-  {{ item.tags.all }}
+  {% for tag in item.tags.all %}
+    <span class="badge badge-primary me-2">{{ tag.name }}</span>
+  {% endfor %}
 </td>

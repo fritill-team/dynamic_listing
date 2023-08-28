@@ -1,6 +1,4 @@
-<div class="mb-3">
-  <label for="filter-id-{{ attrs.name }}"
-         class="required form-label">{{ attrs.label }}</label>
+<div class="form-floating">
 
   <input type="hidden"
          id="filter-id-{{ attrs.name }}-from"
@@ -21,4 +19,7 @@
          value="{{ attrs.value.value }}"
          class="form-control form-control-solid"
          placeholder="{{ attrs.label }}"/>
+
+  <label for="filter-id-{{ attrs.name }}"
+         class="required">{{ attrs.label }}</label>
 </div>

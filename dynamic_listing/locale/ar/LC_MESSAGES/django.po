@@ -49,6 +49,6 @@ msgid "Showing %(start)s-%(end)s of total result %(count)s"
 msgstr "إظهار %(start)s-%(end)s من اجمالى النتائج %(count)s"
 
 #: templates/dynamic_listing/filters/inline_filter.html:26
-#: templates/dynamic_listing/filters/side_filter.html:9
+#: templates/dynamic_listing/filters/_side_filter.html:9
 msgid "Clear Filters"
 msgstr "الغاء الترشيحات"

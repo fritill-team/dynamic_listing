@@ -19,6 +19,9 @@ class Tag(models.Model):
 
 
 class Blog(models.Model):
+    class Meta:
+        ordering = ['-created_at']
+
     title = models.CharField(max_length=225)
     content = models.TextField()
     author = models.ForeignKey(UserModel, on_delete=models.CASCADE)
