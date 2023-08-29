@@ -44,40 +44,6 @@ class FilterSet(django_filters.FilterSet):
                       '{}'.format(_(" & Up"))))
     )
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.applied_filters = []
-
-        for name, filter_ in self.filters.items():
-            value = self.data.get(name)
-
-            if value:
-                label = filter_.label
-                key = name
-
-                if isinstance(filter_, django_filters.MultipleChoiceFilter):
-                    value = self.data.getlist(name)
-                    for v in value:
-                        value_label = self.get_value_label(filter_, v)
-                        self.applied_filters.append(
-                            {'label': label, 'key': key, 'value': v, 'value_label': value_label})
-                else:
-                    value_label = self.get_value_label(filter_, value)
-                    self.applied_filters.append(
-                        {'label': label, 'key': key, 'value': value, 'value_label': value_label})
-
-    def get_value_label(self, filter_, value):
-        if hasattr(filter_, 'field') and hasattr(filter_.field, 'choices'):
-            value_label = None
-            for k, v in filter_.field.choices:
-                if str(k) == str(value):
-                    value_label = v
-                    break
-        else:
-            value_label = value
-
-        return value_label
-
     def get_renderer(self):
         return self.filterset_renderer(self, self.get_filterset_types(), self.fields_map).get()
 

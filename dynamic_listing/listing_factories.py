@@ -15,16 +15,21 @@ class BaseListingFactory:
         self.actions_template_name = actions_template_name
         self.header_template_name = header_template_name
         self.extra_context = extra_context or {}
-        self.media = media or {"js": [], "css": []}
         self.header = header
-
+        self.factory_media = media or {}
         self.create_dynamic_listing(dynamic_list)
 
     def create_dynamic_listing(self, dynamic_list):
+        class Media:
+            js = getattr(self.dynamic_list, 'Media', {}).js + getattr(self, 'factory_media', {}).get('js', tuple())
+            css = getattr(self.dynamic_list, 'Media', {}).css
+            for medium, styles in getattr(self, 'factory_media', {}).get('css', {}).items():
+                css.setdefault(medium, []).extend(styles)
+
         self.Listing = type(
             self.model.__name__ + 'DynamicListing',
             (dynamic_list, DynamicListInit),
-            self.__dict__
+            {'Media': Media, **self.__dict__}
         )
 
     def __call__(self, *args, **kwargs):

@@ -24,6 +24,9 @@ class BlogTableView(DynamicTableView):
         ('created_at', "Created At", "text-end"),
     )
 
+    class Media:
+        js = ('blog/blog.js',)
+
     def get_breadcrumb(self):
         return [
             {"title": "Home", "url": '/'},
@@ -79,7 +82,10 @@ BlogTableFactory = DynamicTableFactory(
         ('category', "Category", "text-center"),
         ('tags', "Tags", "text-center"),
         ('created_at', "Created At", "text-end"),
-    )
+    ),
+    media={
+        "js": ("blog/blog.js",),
+    }
 )
 
 BlogListFactory = DynamicListFactory(
@@ -127,7 +133,7 @@ class UserDetailView(DetailView):
             factory_class = BlogGridFactory
 
         factory = factory_class(self.request, queryset)
-        factory.addContext('blogs_count', queryset.count())
+        factory.extra_context['blogs_count'] = queryset.count()
         return factory
 
     def get_context_data(self, **kwargs):

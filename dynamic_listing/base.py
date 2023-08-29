@@ -1,8 +1,8 @@
 import random
 import string
 
+from django.forms.widgets import MediaDefiningClass
 from django.template.loader import render_to_string
-from django.templatetags.static import static
 from django.utils.safestring import mark_safe
 from django.views.generic.list import MultipleObjectMixin
 
@@ -28,43 +28,6 @@ class BulkActionsMixin:
         return context
 
 
-class MediaMixin:
-    def __init__(self, *args, **kwargs):
-        self.media = {"css": [], 'js': []}
-
-        super(MediaMixin, self).__init__(*args, **kwargs)
-
-    def get_media(self):
-        return mark_safe(self.get_js() + self.get_css())
-
-    def get_js(self):
-        self.media['js'].append('dynamic_listing/dynamic_listing.js')
-
-        js = ''
-
-        if 'js' not in self.media:
-            return js
-
-        for item in self.media['js']:
-            js += '<script src="{}"></script>'.format(static(item))
-
-        return js
-
-    def get_css(self):
-        css = ''
-        if 'css' not in self.media:
-            return css
-
-        for item in self.media['css']:
-            css += '<link href="{}">'.format(static(item))
-        return css
-
-    def get_context_data(self, *args, **kwargs):
-        context = super(MediaMixin, self).get_context_data(*args, **kwargs)
-        context['media'] = self.get_media()
-        return context
-
-
 class FilterMixin:
     filterset_class = None
 
@@ -84,17 +47,18 @@ class FilterMixin:
     def get_filter(self, queryset):
         if self.check_filterset_class():
             filters = self.get_filterset_class()(self.request.GET, queryset)
-            return filters, filters.get_renderer(), filters.applied_filters
-        return None, None, []
+            return filters, filters.get_renderer()
+        return None, None
 
     def get_context_data(self, *args, **kwargs):
         context = super(FilterMixin, self).get_context_data(*args, **kwargs)
-        context['filter'] = self.filterset_renderer.as_fields()
-        context['applied_filters'] = self.filterset_renderer.as_applied_filters()
+        if self.check_filterset_class():
+            context['filter'] = self.filterset_renderer.as_fields()
+            context['applied_filters'] = self.filterset_renderer.as_applied_filters()
         return context
 
 
-class BaseList(BulkActionsMixin, MediaMixin, FilterMixin, MultipleObjectMixin):
+class BaseList(BulkActionsMixin, FilterMixin, MultipleObjectMixin, metaclass=MediaDefiningClass):
     queryset = None
     request = None
     listing_type = ''
@@ -102,10 +66,13 @@ class BaseList(BulkActionsMixin, MediaMixin, FilterMixin, MultipleObjectMixin):
     paginate_by = 10
     listing_actions = None
     modals_template_name = None
-    load_actions_from_template = False
     header_template_name = None
     factory = False
     container_class = "app-container container-xxl"
+
+    class Media:
+        js = ('dynamic_listing/dynamic_listing.js',)
+        css = {}
 
     def __init__(self, *args, **kwargs):
         source = string.ascii_letters + string.digits
@@ -125,7 +92,7 @@ class BaseList(BulkActionsMixin, MediaMixin, FilterMixin, MultipleObjectMixin):
     def get_queryset(self):
         queryset = super(BaseList, self).get_queryset()
         if self.check_filterset_class():
-            filters, self.filterset_renderer, self.applied_filters = self.get_filter(queryset)
+            filters, self.filterset_renderer = self.get_filter(queryset)
             queryset = filters.qs
         return queryset
 
@@ -137,6 +104,7 @@ class BaseList(BulkActionsMixin, MediaMixin, FilterMixin, MultipleObjectMixin):
         context['listing_type'] = self.listing_type
         context['factory'] = self.factory
         context['container_class'] = self.container_class
+        context['media'] = self.media
         if self.modals_template_name:
             context['modals_template_name'] = self.modals_template_name
         if self.header_template_name:
@@ -162,10 +130,6 @@ class DynamicTable(BaseList):
             context['row_template_name'] = self.row_template_name
         else:
             context['rows'] = self.load(context['object_list'])
-
-        if self.load_actions_from_template:
-            context['actions_template_name'] = self.actions_template_name
-
         return context
 
     def load(self, object_list):
