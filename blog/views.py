@@ -21,6 +21,7 @@ class BlogTableView(DynamicTableView):
         ('content', "Content", "text-center max-w-200px"),
         ('category', "Category", "text-center"),
         ('tags', "Tags", "text-center"),
+        ('created_at', "Created At", "text-end"),
     )
 
     def get_breadcrumb(self):
@@ -77,6 +78,7 @@ BlogTableFactory = DynamicTableFactory(
         ('content', "Content", "text-center max-w-200px"),
         ('category', "Category", "text-center"),
         ('tags', "Tags", "text-center"),
+        ('created_at', "Created At", "text-end"),
     )
 )
 
@@ -125,7 +127,7 @@ class UserDetailView(DetailView):
             factory_class = BlogGridFactory
 
         factory = factory_class(self.request, queryset)
-        factory.extra_context['blogs_count'] = queryset.count()
+        factory.addContext('blogs_count', queryset.count())
         return factory
 
     def get_context_data(self, **kwargs):

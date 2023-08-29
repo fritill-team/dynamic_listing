@@ -12,10 +12,10 @@ class FilterRenderer:
         self.filterset = filterset
         self.filterset_types = filterset_types
         self.fields_map = fields_map
+        self.renderers = {}
 
-    def as_fields(self):
+    def get(self, *args, **kwargs):
         for name, filter_field in self.filterset.filters.items():
-
             value = self.filterset.form.data.get('name', None)
             renderer = self.get_filter_renderer_field(filter_field)
             try:
@@ -25,13 +25,24 @@ class FilterRenderer:
                     value=value,
                     filter_type=self.filterset_types.get(name) if self.filterset_types.get(name, None) else 'filter',
                 )
-                if not filter_renderer.is_hidden() or name in self.filterset.force_visibility:
-                    position = self.get_position(name)
-                    self.filters[position].append(filter_renderer.get())
-
+                self.renderers[name] = filter_renderer
             except Exception as e:
                 raise Exception("No Renderer Implemented for: \"{}\"".format(type(filter_field)))
+        return self
 
+    def as_applied_filters(self):
+        applied_filters = []
+        for name, renderer in self.renderers.items():
+            if renderer.is_applied():
+                for applied_filter in renderer.get_applied_filter():
+                    applied_filters.append(applied_filter)
+        return applied_filters
+
+    def as_fields(self):
+        for name, renderer in self.renderers.items():
+            if not renderer.is_hidden() or name in self.filterset.force_visibility:
+                position = self.get_position(name)
+                self.filters[position].append(renderer.get())
         return self.filters
 
     def get_filter_renderer_field(self, filter_field):

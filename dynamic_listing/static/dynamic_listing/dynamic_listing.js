@@ -44,23 +44,46 @@ var addFiltersToDynamicListingApp = function () {
 
     removeFilterButtons.forEach(function (button) {
       button.addEventListener('click', function (e) {
-        e.preventDefault()
-        var params = new URLSearchParams(location.search),
-          keyToRemove = button.getAttribute('data-key'),
-          valueToRemove = button.getAttribute('data-value'),
-          values = params.getAll(keyToRemove),
-          updatedValues = values.filter(function (value) {
-            return value !== valueToRemove
-          })
+        /* e.preventDefault()
+         var params = new URLSearchParams(location.search),
+           keyToRemove = button.getAttribute('data-key'),
+           valueToRemove = button.getAttribute('data-value'),
+           values = params.getAll(keyToRemove),
+           updatedValues = values.filter(function (value) {
+             return value !== valueToRemove
+           })
 
-        params.delete(keyToRemove)
-        updatedValues.forEach(function (value) {
-          params.append(keyToRemove, value)
-        })
+         params.delete(keyToRemove)
+         updatedValues.forEach(function (value) {
+           params.append(keyToRemove, value)
+         })
 
-        var newQueryString = params.toString()
-        console.log(newQueryString)
-        location.href = location.origin + location.pathname + (newQueryString ? "?" + newQueryString : "")
+         var newQueryString = params.toString()
+         console.log(newQueryString)
+         location.href = location.origin + location.pathname + (newQueryString ? "?" + newQueryString : "")*/
+        e.preventDefault();
+
+        var params = new URLSearchParams(location.search);
+        var keysToRemove = button.getAttribute('data-key').split(','); // Split the comma-separated keys
+        var valuesToRemove = button.getAttribute('data-value').split(','); // Split the comma-separated values
+
+        keysToRemove.forEach(function (keyToRemove, index) {
+          var valueToRemove = valuesToRemove[index];
+
+          var currentValues = params.getAll(keyToRemove);
+          var updatedValues = currentValues.filter(function (value) {
+            return value !== valueToRemove;
+          });
+
+          params.delete(keyToRemove);
+
+          updatedValues.forEach(function (value) {
+            params.append(keyToRemove, value);
+          });
+        });
+
+        var newQueryString = params.toString();
+        location.href = location.origin + location.pathname + (newQueryString ? "?" + newQueryString : "");
       })
     })
   }

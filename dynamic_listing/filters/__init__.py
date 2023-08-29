@@ -79,7 +79,7 @@ class FilterSet(django_filters.FilterSet):
         return value_label
 
     def get_renderer(self):
-        return self.filterset_renderer(self, self.get_filterset_types(), self.fields_map).as_fields()
+        return self.filterset_renderer(self, self.get_filterset_types(), self.fields_map).get()
 
     def get_filterset_types(self):
         return self.filterset_types

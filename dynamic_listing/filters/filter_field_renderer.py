@@ -43,6 +43,22 @@ class FilterFieldRenderer:
             "attrs": self.get_attrs()
         }
 
+    def is_applied(self):
+        return self.name in self.form_field.form.data and self.form_field.form.data.get(self.name)
+
+    def get_applied_filter(self):
+        return [
+            {
+                "label": self.filter_field.label,
+                "key": self.name,
+                "value": self.form_field.form.data.get(self.name),
+                "value_label": self.get_value_label(),
+            }
+        ]
+
+    def get_value_label(self):
+        return self.form_field.form.data.get(self.name)
+
 
 class NumberInFilterFieldRenderer(FilterFieldRenderer):
     element = 'number'
@@ -139,6 +155,17 @@ class ModelChoiceFilterFieldRenderer(FilterFieldRenderer):
     def get_value(self):
         return self.form_field.form.data.get(self.name, None)
 
+    def get_applied_filter(self):
+        value = self.form_field.form.data.get(self.name)
+        return [
+            {
+                "label": self.filter_field.label,
+                "key": self.name,
+                "value": value,
+                "value_label": str(self.form_field.field.queryset.get(id=value)),
+            }
+        ]
+
 
 class ModelMultipleChoiceFilterFieldRenderer(ModelChoiceFilterFieldRenderer):
     template_name = 'dynamic_listing/filters/fields/checkbox_group.html'
@@ -151,6 +178,22 @@ class ModelMultipleChoiceFilterFieldRenderer(ModelChoiceFilterFieldRenderer):
     def get_value(self):
         return self.form_field.form.data.getlist(
             self.name) if self.form_field.form.data and self.name in self.form_field.form.data else []
+
+    def is_applied(self):
+        return self.name in self.form_field.form.data and self.form_field.form.data.getlist(self.name)
+
+    def get_applied_filter(self):
+        applied_filters = []
+        for value in self.form_field.form.data.getlist(self.name):
+            applied_filters.append(
+                {
+                    "label": self.filter_field.label,
+                    "key": self.name,
+                    "value": value,
+                    "value_label": str(self.form_field.field.queryset.get(id=value)),
+                }
+            )
+        return applied_filters
 
 
 class OrderingFilterRenderer(ChoiceFilterFieldRenderer):
@@ -180,8 +223,8 @@ class DateFromToRangeFilterRenderer(FilterFieldRenderer):
         return False
 
     def get_value(self):
-        range_from = self.name + '_from'
-        range_to = self.name + '_to'
+        range_from = self.name + '_after'
+        range_to = self.name + '_before'
         value = ''
         if self.form_field.form.data.get(range_from, None) and self.form_field.form.data.get(range_from, None):
             value = self.form_field.form.data.get(range_from, None) + ' - ' + self.form_field.form.data.get(range_to,
@@ -191,6 +234,32 @@ class DateFromToRangeFilterRenderer(FilterFieldRenderer):
             "range_to": self.form_field.form.data.get(range_to, None),
             'value': value
         }
+
+    def is_applied(self):
+        range_from = self.name + '_after'
+        range_to = self.name + '_before'
+        data = self.form_field.form.data
+        return ((range_from in data and data.get(range_from) is not None) \
+                or (range_to in data and data.get(range_to) is not None))
+
+    def get_applied_filter(self):
+        range_from = self.name + '_after'
+        range_to = self.name + '_before'
+        data = self.form_field.form.data
+        return [
+            {
+                "label": self.filter_field.label,
+                "key": f"{range_from},{range_to}",
+                "value": f"{data.get(range_from, '')},{data.get(range_to, '')}",
+                "value_label": self.get_value_label(),
+            }
+        ]
+
+    def get_value_label(self):
+        range_from = self.name + '_after'
+        range_to = self.name + '_before'
+        data = self.form_field.form.data
+        return f"{data.get(range_from, '')} - {data.get(range_to, '')}"
 
 
 FIELD_RENDERER_MAP = {

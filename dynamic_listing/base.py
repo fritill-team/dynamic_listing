@@ -84,13 +84,13 @@ class FilterMixin:
     def get_filter(self, queryset):
         if self.check_filterset_class():
             filters = self.get_filterset_class()(self.request.GET, queryset)
-            return filters, filters.get_renderer, filters.applied_filters
+            return filters, filters.get_renderer(), filters.applied_filters
         return None, None, []
 
     def get_context_data(self, *args, **kwargs):
         context = super(FilterMixin, self).get_context_data(*args, **kwargs)
-        context['filter'] = self.filterset_renderer
-        context['applied_filters'] = self.applied_filters
+        context['filter'] = self.filterset_renderer.as_fields()
+        context['applied_filters'] = self.filterset_renderer.as_applied_filters()
         return context
 
 
