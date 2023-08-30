@@ -29,8 +29,8 @@
 
     {% if filter.top_right|length > 0 or bulk_actions %}
       <div class="d-flex" data-right-filters="true">
-        {% if actions %}
-
+        {% if filters and actions %}
+          {% include actions %}
         {% endif %}
 
         {% for filter in filter.top_right %}
