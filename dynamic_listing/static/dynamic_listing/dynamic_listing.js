@@ -164,11 +164,181 @@ var RowSelection = function () {
   }
 }()
 
+var BulkActions = function () {
+  var actionsButtons, selectedItems, FromEl
+
+  function sendRequest({method, url, forceReload, callback, inputType}) {
+    const headers = new Headers({
+      "X-CSRFToken": csrfToken,
+      'Content-Type': 'application/json',
+    });
+
+    fetch(url, {
+      method: method,
+      headers: headers,
+      body: JSON.stringify(getValue(inputType))
+    })
+      .then(response => {
+        if (!response.ok) {
+          return response.json()
+            .then(function (errorData) {
+              throw new Error(errorData.message);
+            })
+        }
+        return response.json();
+      })
+      .then(res => {
+        toastr.success(res['message']);
+        if (forceReload) {
+          location.reload();
+        } else if (callback && !forceReload) {
+          let cb = window;
+          const callbackSplit = callback.split('.');
+          for (const obj of callbackSplit) {
+            cb = cb[obj];
+          }
+          if (typeof cb === 'function') {
+            cb.call(res);
+          }
+        }
+      })
+      .catch(error => {
+        toastr.error(error.message);
+        console.error(error.message);
+      });
+  }
+
+  function hasAttr(el, attr) {
+    return el.hasAttribute(attr)
+  }
+
+  function getAttr(el, attr, initial = null) {
+    if (hasAttr(el, attr)) {
+      return el.getAttribute(attr)
+    }
+    return initial
+  }
+
+  function getValue(inputType) {
+    var value = {type: inputType}
+    switch (inputType) {
+      case 'selected':
+        value['value'] = selectedItems.value
+        break
+      case 'queryset':
+        var queryString = window.location.search,
+          params = new URLSearchParams(queryString)
+        value['value'] = params.toString()
+        break
+      case "none":
+        value['value'] = null
+    }
+    return value
+  }
+
+  function initOptions(button) {
+    var options = {},
+      asForm = getAttr(button, 'data-as-form', false) === 'true',
+      method = getAttr(button, 'data-request-method', 'GET'),
+      url = button.getAttribute('href'),
+      inputType = getAttr(button, 'data-input-type', 'selected')
+    options.id = Date.now()
+    options.message = getAttr(button, 'data-confirm-message', gettext('Are you sure you would like to do this action!'))
+
+    if (asForm) {
+      var values = getValue(inputType),
+        inputs = []
+      for (var key in values) {
+        if (values.hasOwnProperty(key)) {
+          inputs.push(`<input type="hidden" name="${key}" value="${values[key]}">`)
+        }
+      }
+      options.html = `<form action="${url}" method="${method}" id="bulk-action-form-${options.id}">
+        <h2>${options.message}</h2>
+        <input type="hidden" name="csrfmiddlewaretoken" value="${csrfToken}">
+        ${inputs.join('')}
+      </form>`
+    }
+    options.icon = getAttr(button, 'data-confirm-icon', 'warning')
+    options.yes = getAttr(button, 'data-confirm-yes', gettext('Yes, do it!'))
+    options.no = getAttr(button, 'data-confirm-no', gettext('No, cancel!'))
+    options.cancel = {
+      text: getAttr(button, 'data-cancel-message', gettext("Your action has been cancelled!.")),
+      icon: getAttr(button, 'data-cancel-icon', 'error'),
+      button: getAttr(button, 'data-cancel-action', gettext("Ok, got it!")),
+    }
+    options.requestParams = {
+      method,
+      url,
+      forceReload: getAttr(button, 'data-force-reload', true) !== 'false',
+      callback: getAttr(button, 'data-callback', false),
+      inputType,
+      asForm
+    }
+    return options
+  }
+
+  function fireConfirmMessage(options) {
+    var alertOptions = {
+      text: options.message,
+      icon: options.icon,
+      buttonsStyling: false,
+      showCancelButton: true,
+      confirmButtonText: options.yes,
+      cancelButtonText: options.no,
+      customClass: {
+        confirmButton: "btn btn-primary",
+        cancelButton: "btn btn-secondary",
+      }
+    }
+    if (options.requestParams.asForm)
+      alertOptions.html = options.html
+
+    Swal.fire(alertOptions).then(function (result) {
+      if (result.value) {
+        if (!options.requestParams.asForm)
+          sendRequest(options.requestParams)
+        else
+          document.getElementById(`bulk-action-form-${options.id}`).submit()
+      } else if (result.dismiss === 'cancel') {
+        Swal.fire({
+          text: options.cancel.text,
+          icon: options.cancel.icon,
+          buttonsStyling: false,
+          confirmButtonText: options.cancel.button,
+          customClass: {
+            confirmButton: "btn btn-primary",
+          }
+        });
+      }
+    });
+  }
+
+  function initHandlers() {
+    actionsButtons.forEach(function (button) {
+      button.addEventListener('click', function (e) {
+        e.preventDefault()
+        fireConfirmMessage(initOptions(button))
+      })
+    })
+  }
+
+  return {
+    init() {
+      actionsButtons = document.querySelectorAll('[data-toggle="bulk-action"]')
+      selectedItems = document.querySelector('[data-selected-items="true"]')
+      initHandlers()
+    }
+  }
+}()
+
 
 if (document.readyState !== 'loading' && document.body) {
   addFiltersToDynamicListingApp.init()
   RowSelection.init()
+  BulkActions.init();
 } else {
   document.addEventListener('DOMContentLoaded', addFiltersToDynamicListingApp.init)
   document.addEventListener('DOMContentLoaded', RowSelection.init)
+  document.addEventListener('DOMContentLoaded', BulkActions.init);
 }

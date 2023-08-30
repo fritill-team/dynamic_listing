@@ -6,7 +6,13 @@
 
 {% if not factory and media %}
   {% block styles %}
-    {{ media }}
+    {{ media.render_css|join:''|safe }}
+  {% endblock %}
+{% endif %}
+
+{% if not factory and media %}
+  {% block scripts %}
+    {{ media.render_js|join:''|safe }}
   {% endblock %}
 {% endif %}
 
