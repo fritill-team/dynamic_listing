@@ -104,7 +104,9 @@ var RowSelection = function () {
   function updateSelectedItemsInput() {
     const selectedCheckboxes = document.querySelectorAll('[data-selection-checkbox="item"]:checked');
     const selectedValues = Array.from(selectedCheckboxes).map(checkbox => checkbox.value);
-    selectedItemsInput.value = selectedValues.join(",");
+    selectedItemsInput.forEach(function (input) {
+      input.value = selectedValues.join(",");
+    })
   }
 
   function updateActionsContainer() {
