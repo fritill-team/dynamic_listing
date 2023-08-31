@@ -271,7 +271,7 @@ var BulkActions = function () {
       method,
       url,
       forceReload: getAttr(button, 'data-force-reload', true) !== 'false',
-      callback: getAttr(button, 'data-callback', false),
+      callback: getAttr(button, 'data-callback', ''),
       inputType,
       asForm
     }
@@ -328,7 +328,8 @@ var BulkActions = function () {
       actionsButtons = document.querySelectorAll('[data-toggle="bulk-action"]')
       selectedItems = document.querySelector('[data-selected-items="true"]')
       initHandlers()
-    }
+    },
+    getValue
   }
 }()
 
