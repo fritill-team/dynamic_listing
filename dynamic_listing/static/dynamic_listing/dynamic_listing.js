@@ -165,7 +165,7 @@ var RowSelection = function () {
 }()
 
 var BulkActions = function () {
-  var actionsButtons, selectedItems, FromEl
+  var actionsButtons, selectedItems, initialized
 
   function sendRequest({method, url, forceReload, callback, inputType}) {
     const headers = new Headers({
@@ -271,7 +271,7 @@ var BulkActions = function () {
       method,
       url,
       forceReload: getAttr(button, 'data-force-reload', true) !== 'false',
-      callback: getAttr(button, 'data-callback', false),
+      callback: getAttr(button, 'data-callback', ''),
       inputType,
       asForm
     }
@@ -323,11 +323,55 @@ var BulkActions = function () {
     })
   }
 
+  function checkFormHasInput(form, inputName) {
+    return form.querySelector(`input[name="${inputName}"]`) !== null;
+  }
+
   return {
     init() {
       actionsButtons = document.querySelectorAll('[data-toggle="bulk-action"]')
       selectedItems = document.querySelector('[data-selected-items="true"]')
       initHandlers()
+
+      initialized = new Event('BulkActionsInitialized')
+      document.dispatchEvent(initialized)
+    },
+    getValue,
+    addBulkActionsInputsToForm(form, inputType) {
+      var value = getValue(inputType), typeInput, valueInput
+      if (checkFormHasInput(form, 'type')) {
+        typeInput = document.querySelector('input[name="type"]')
+      } else {
+        typeInput = document.createElement('input')
+        typeInput.setAttribute('type', 'hidden')
+        typeInput.setAttribute('name', 'type')
+        form.appendChild(typeInput)
+      }
+
+      if (checkFormHasInput(form, 'value')) {
+        valueInput = document.querySelector('input[name="value"]')
+      } else {
+        valueInput = document.createElement('input')
+        valueInput.setAttribute('type', 'hidden')
+        valueInput.setAttribute(`name`, 'value')
+        form.appendChild(valueInput)
+      }
+
+      typeInput.value = inputType
+      valueInput.value = value['value']
+    },
+    resetBulkActionsInputs(form) {
+      var typeInput, valueInput
+
+      if (checkFormHasInput(form, 'type')) {
+        typeInput = document.querySelector('input[name="type"]')
+        typeInput.value = ''
+      }
+
+      if (checkFormHasInput(form, 'value')) {
+        valueInput = document.querySelector('input[name="value"]')
+        valueInput.value = ''
+      }
     }
   }
 }()

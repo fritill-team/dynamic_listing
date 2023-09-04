@@ -3,6 +3,7 @@ from .base import DynamicListInit, DynamicTable, DynamicGrid
 
 class BaseListingFactory:
     def __init__(self, model, dynamic_list, filterset_class=None, listing_type=None,
+                 modals_template_name=None,
                  listing_actions=None, actions_template_name=None, header_template_name=None, bulk_actions=False,
                  extra_context=None, media=None, header=None):
         self.factory = True
@@ -14,6 +15,7 @@ class BaseListingFactory:
         self.listing_actions = listing_actions
         self.actions_template_name = actions_template_name
         self.header_template_name = header_template_name
+        self.modals_template_name = modals_template_name
         self.extra_context = extra_context or {}
         self.header = header
         self.factory_media = media or {}

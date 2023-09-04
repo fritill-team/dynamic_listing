@@ -1,14 +1,51 @@
 import django_filters
 
-from .filters import OrderingFilter, NumberInFilter
+from .filters import OrderingFilter, NumberInFilter, RateFilter
 
 
 class FilterFieldRenderer:
+    """
+    Base class for rendering filter fields in a Django Filters filter set.
+
+    This class serves as the foundation for rendering various types of filter fields within a Django Filters filter set.
+    Subclasses of this renderer provide specific rendering logic for different filter types.
+
+    :ivar template_name: The name of the template to use for rendering the filter field.
+    :ivar element: The HTML element type for the filter field (e.g., 'text', 'checkbox').
+    :ivar single: Indicates whether the filter field is for single selection (True) or multiple selection (False).
+    :ivar name: The name of the filter field.
+    :ivar filter_field: The Django Filters filter field being rendered.
+    :ivar filter_type: The type of filter (e.g., 'filter', 'search', 'sort').
+    :ivar form_field: The form field associated with the filter field.
+    :ivar value: The current value of the filter field.
+
+    :param filter_field: The Django Filters filter field to be rendered.
+    :type filter_field: django_filters.filters.Filter
+    :param form_field: The form field associated with the filter field.
+    :type form_field: django.forms.Field
+    :param value: The current value of the filter field.
+    :type value: Any
+    :param filter_type: The type of filter (default is 'filter').
+    :type filter_type: str
+    """
+
     template_name = ''
     element = None
     single = True
 
     def __init__(self, filter_field, form_field, value, filter_type='filter'):
+        """
+        Initialize a new FilterFieldRenderer instance.
+
+        :param filter_field: The Django Filters filter field to be rendered.
+        :type filter_field: django_filters.filters.Filter
+        :param form_field: The form field associated with the filter field.
+        :type form_field: django.forms.Field
+        :param value: The current value of the filter field.
+        :type value: Any
+        :param filter_type: The type of filter (default is 'filter').
+        :type filter_type: str
+        """
         self.name = filter_field.field_name
         self.filter_field = filter_field
         self.filter_type = filter_type
@@ -16,9 +53,21 @@ class FilterFieldRenderer:
         self.value = value
 
     def is_hidden(self):
+        """
+        Check if the filter field should be hidden in the UI.
+
+        :return: True if the filter field should be hidden; otherwise, False.
+        :rtype: bool
+        """
         return True
 
     def get_attrs(self):
+        """
+        Get HTML attributes for rendering the filter field.
+
+        :return: A dictionary of HTML attributes.
+        :rtype: dict
+        """
         return {
             "name": self.name,
             "value": self.get_value(),
@@ -29,12 +78,30 @@ class FilterFieldRenderer:
         }
 
     def get_value(self):
+        """
+        Get the current value of the filter field.
+
+        :return: The current value of the filter field.
+        :rtype: Any
+        """
         return self.value
 
     def get_template_name(self):
+        """
+        Get the name of the template used for rendering the filter field.
+
+        :return: The template name.
+        :rtype: str
+        """
         return self.template_name
 
     def get(self):
+        """
+        Get a dictionary representing the filter field's attributes.
+
+        :return: A dictionary containing the filter field's attributes.
+        :rtype: dict
+        """
         return {
             "element": self.element,
             "template_name": self.get_template_name(),
@@ -44,9 +111,21 @@ class FilterFieldRenderer:
         }
 
     def is_applied(self):
+        """
+        Check if the filter field has an applied filter.
+
+        :return: True if the filter has an applied filter; otherwise, False.
+        :rtype: bool
+        """
         return self.name in self.form_field.form.data and self.form_field.form.data.get(self.name)
 
     def get_applied_filter(self):
+        """
+        Get information about the applied filter for this field.
+
+        :return: A list containing information about the applied filter.
+        :rtype: list of dict
+        """
         return [
             {
                 "label": self.filter_field.label,
@@ -57,6 +136,12 @@ class FilterFieldRenderer:
         ]
 
     def get_value_label(self):
+        """
+        Get a label representing the current value of the filter field.
+
+        :return: A label for the filter field's value.
+        :rtype: str
+        """
         return self.form_field.form.data.get(self.name)
 
 
@@ -271,5 +356,6 @@ FIELD_RENDERER_MAP = {
     django_filters.filters.DateTimeFilter: DateTimeFilterFieldRenderer,
     django_filters.filters.DateFromToRangeFilter: DateFromToRangeFilterRenderer,
     OrderingFilter: OrderingFilterRenderer,
-    NumberInFilter: NumberInFilterFieldRenderer
+    NumberInFilter: NumberInFilterFieldRenderer,
+    RateFilter: ChoiceFilterFieldRenderer
 }

@@ -1,15 +1,12 @@
-.. Dynamic Listing documentation master file, created by
-   sphinx-quickstart on Thu Aug 31 11:01:49 2023.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 Welcome to Dynamic Listing's documentation!
 ===========================================
 
-.. toctree::
+.. toctree:: 
    :maxdepth: 2
+   :hidden:
    :caption: Contents:
-
+   
+   bulk_actions
 
 
 Indices and tables

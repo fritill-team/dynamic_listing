@@ -7,6 +7,9 @@ from django.utils.safestring import mark_safe
 from django.views.generic.list import MultipleObjectMixin
 
 
+# from .filters import FilterRenderer
+
+
 class DynamicListInit:
     def __init__(self, request=None, queryset=None, *args, **kwargs):
         self.args = args
@@ -37,22 +40,25 @@ class FilterMixin:
 
         super(FilterMixin, self).__init__(*args, **kwargs)
 
-    def check_filterset_class(self):
-        filterset_class = self.get_filterset_class()
-        return filterset_class and hasattr(filterset_class, 'filterset_renderer')
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        if self.filterset_class:
+            filters = self.get_filterset_class()(self.request.GET, queryset)
+            self.get_filterset_renderer(filters)
+            queryset = filters.qs
+        return queryset
+
+    def get_filterset_renderer(self, filterset):
+        from dynamic_listing.filters import FilterRenderer
+        self.filterset_renderer = FilterRenderer(filterset).get()
 
     def get_filterset_class(self):
         return self.filterset_class
 
-    def get_filter(self, queryset):
-        if self.check_filterset_class():
-            filters = self.get_filterset_class()(self.request.GET, queryset)
-            return filters, filters.get_renderer()
-        return None, None
-
     def get_context_data(self, *args, **kwargs):
         context = super(FilterMixin, self).get_context_data(*args, **kwargs)
-        if self.check_filterset_class():
+        print(self.filterset_class)
+        if self.filterset_class:
             context['filter'] = self.filterset_renderer.as_fields()
             context['applied_filters'] = self.filterset_renderer.as_applied_filters()
         return context
@@ -88,13 +94,6 @@ class BaseList(BulkActionsMixin, FilterMixin, MultipleObjectMixin, metaclass=Med
 
     def render(self):
         return mark_safe(render_to_string('dynamic_listing/partials/_listing_inner.html', self.get_context_data()))
-
-    def get_queryset(self):
-        queryset = super(BaseList, self).get_queryset()
-        if self.check_filterset_class():
-            filters, self.filterset_renderer = self.get_filter(queryset)
-            queryset = filters.qs
-        return queryset
 
     def get_context_data(self, *args, **kwargs):
         context = super(BaseList, self).get_context_data(*args, **kwargs)
