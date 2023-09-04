@@ -6,7 +6,7 @@
 
 ## Description
 
-Provide a brief description of your package here. Explain what it does and why it's useful.
+The Django Dynamic List Package provides a robust way to create and manage listing views in Django applications, utilizing filters, bulk actions, and dynamic table, dynamic list, and dynamic grid components. It seamlessly integrates with [django-filter](https://django-filter.readthedocs.io/) to enhance your app's list views.
 
 ## Installation
 
