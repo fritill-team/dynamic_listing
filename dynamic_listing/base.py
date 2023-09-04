@@ -57,7 +57,6 @@ class FilterMixin:
 
     def get_context_data(self, *args, **kwargs):
         context = super(FilterMixin, self).get_context_data(*args, **kwargs)
-        print(self.filterset_class)
         if self.get_filterset_class() is not None:
             context['filter'] = self.filterset_renderer.as_fields()
             context['applied_filters'] = self.filterset_renderer.as_applied_filters()
