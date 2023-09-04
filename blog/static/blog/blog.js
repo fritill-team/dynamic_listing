@@ -1,9 +1,18 @@
 var BulkDelete = function () {
-  var form, deleteModal, toggle, modalEl
+  var form, deleteModal, bulkActionToggle, modalEl, actionToggle
 
 
   function initialize() {
-    toggle.addEventListener('click', function (e) {
+
+    actionToggle.addEventListener('click', function (e) {
+      e.preventDefault()
+      BulkActions.addBulkActionsInputsToForm(
+        form,
+        this.getAttribute('data-input-type')
+      )
+
+    })
+    bulkActionToggle.addEventListener('click', function (e) {
       e.preventDefault()
       BulkActions.addBulkActionsInputsToForm(
         form,
@@ -21,7 +30,8 @@ var BulkDelete = function () {
     init() {
       modalEl = document.getElementById('bulk-delete')
       deleteModal = new bootstrap.Modal(modalEl)
-      toggle = document.getElementById('delete-modal-toggle')
+      bulkActionToggle = document.getElementById('delete-modal-bulk-action-toggle')
+      actionToggle = document.getElementById('delete-modal-action-toggle')
       form = document.getElementById('delete-form')
       initialize()
     }

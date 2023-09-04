@@ -8,14 +8,15 @@
           <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
         </div>
       </div>
-      <form action="" id="delete-form">
+      <form action="{% url "blog:blog-bulk-delete" %}" id="delete-form" method="POST">
+        {% csrf_token %}
         <div class="modal-body">
           <p>Are you sure you want to delete these items</p>
         </div>
 
         <div class="modal-footer">
           <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-danger">Delete</button>
+          <button type="submit" class="btn btn-danger">Delete</button>
         </div>
       </form>
     </div>
