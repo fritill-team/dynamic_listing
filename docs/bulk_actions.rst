@@ -167,33 +167,42 @@ These functions allow you to seamlessly integrate bulk actions with your custom 
 Handling Backend Views
 ----------------------
 
-In your Django views, you might need to handle incoming data from HTTP requests, which can come in different formats. Here's an example of how you can handle incoming data using the code snippet provided:
+In your Django views, you can easily handle incoming data from HTTP requests, which may come in different formats. This section explains how to handle incoming data using the provided `BulkActionMixin` and a sample view.
+
+Assuming you have a view, such as `BlogDeleteView`, that needs to handle bulk actions, you can use the `BulkActionMixin` to simplify the process. The mixin provides the `get_actions_type_and_value` method to parse the incoming data.
+
+Let's see how to integrate the `BulkActionMixin` into your view:
 
 .. code-block:: python
 
-    if request.POST.keys():
-        data = request.POST
-    else:
-        data = json.loads(request.body)
+    from dynamic_listing.views import BulkActionMixin
+    from django.views import View
 
-    if data['type'] == 'selected':
-        value = data['value'].split(',')
-    elif data['type'] == 'queryset':
-        value = parse_qs(data['value'])
-        for key in value:
-            if len(value[key]) == 1:
-                value[key] = value[key][0]
-        value = dict(value)
-    else:
-        value = None
+    class BlogDeleteView(BulkActionMixin, View):
+        def post(self, request, *args, **kwargs):
+           # Use the BulkActionMixin to get the action type and value
+           input_type, value = self.get_actions_type_and_value(request.POST)
 
-This code snippet demonstrates a common approach to handle incoming data in a Django view. It checks whether the data is provided via a POST request or in JSON format. Then, it processes the data based on its type, which can be 'selected' or 'queryset'.
+           # Now, you can use 'input_type' and 'value' as needed in your view logic
 
-- If the data type is 'selected', it splits the 'value' field by commas.
-- If the data type is 'queryset', it parses the 'value' field into a dictionary, handling cases where values are lists.
-- If the data type is something else, it sets 'value' to None.
+           # Example usage:
+           if input_type == 'selected':
+               # Handle selected items based on 'value'
+               pass
+           elif input_type == 'queryset':
+               # Handle queryset items based on 'value'
+               pass
+           else:
+               # Handle other cases where 'value' is None
+               pass
 
-You can adapt and extend this code to handle your specific use cases in Django views.
+           # Continue with your view logic based on the parsed data
+
+In this example, the `BlogDeleteView` class uses the `BulkActionMixin` to easily retrieve the action type and value from the incoming POST data. This simplifies the process of handling different types of bulk actions.
+
+You can then use `input_type` and `value` as needed in your view logic. For instance, you can handle selected items, queryset items, or other scenarios based on the parsed data.
+
+By using the `BulkActionMixin`, you can streamline the handling of bulk actions in your Django views, making your code more organized and maintainable.
 
 
 Troubleshooting
