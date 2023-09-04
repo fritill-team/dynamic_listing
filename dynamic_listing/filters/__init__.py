@@ -3,7 +3,7 @@ from .filter_field_renderer import NumberInFilterFieldRenderer, BooleanFilterFie
     ModelMultipleChoiceFilterFieldRenderer, OrderingFilterRenderer, DateFromToRangeFilterRenderer, FilterFieldRenderer, \
     FIELD_RENDERER_MAP
 from .filter_renderer import FilterRenderer
-from .filters import NumberInFilter, OrderingFilter, FilterSet
+from .filters import NumberInFilter, OrderingFilter, FilterSet, RateFilter
 
 __all__ = (
     "FilterSet",
@@ -22,4 +22,5 @@ __all__ = (
     "DateFromToRangeFilterRenderer",
     "NumberInFilter",
     "OrderingFilter",
+    "RateFilter"
 )
