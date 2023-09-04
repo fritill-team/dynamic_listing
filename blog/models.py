@@ -27,6 +27,8 @@ class Blog(models.Model):
     author = models.ForeignKey(UserModel, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     tags = models.ManyToManyField(Tag)
+    details = models.JSONField(default=dict)
+    image = models.FileField(upload_to='blog/images/', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

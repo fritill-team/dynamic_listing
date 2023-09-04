@@ -15,6 +15,7 @@ class BlogTableView(DynamicTableView):
     load_rows_from_template = True
     bulk_actions = '_bulk_actions.html',
     header_template_name = 'blog/_header.html'
+    modals_template_name = 'blog/_modals.html'
     table_columns = (
         ('id', "ID"),
         ('title', "Title", "text-start max-w-200px"),
@@ -42,6 +43,7 @@ class BlogListView(DynamicListView):
     item_template_name = 'blog/_list_item.html'
     bulk_actions = '_bulk_actions.html',
     header_template_name = 'blog/_header.html'
+    modals_template_name = 'blog/_modals.html'
 
     def get_breadcrumb(self):
         return [
@@ -59,6 +61,7 @@ class BlogGridView(DynamicGridView):
     bulk_actions = '_bulk_actions.html',
     header_template_name = 'blog/_header.html'
     container_class = "app-container container-fluid"
+    modals_template_name = 'blog/_modals.html'
 
     def get_breadcrumb(self):
         return [
@@ -75,6 +78,7 @@ BlogTableFactory = DynamicTableFactory(
     bulk_actions='_bulk_actions.html',
     row_template_name='blog/_table_row.html',
     header_template_name='blog/_header.html',
+    modals_template_name='blog/_modals.html',
     table_columns=(
         ('id', "ID"),
         ('title', "Title", "text-start max-w-200px"),
@@ -93,6 +97,7 @@ BlogListFactory = DynamicListFactory(
     filterset_class=BlogsFilter,
     bulk_actions='_bulk_actions.html',
     item_template_name='blog/_list_item.html',
+    modals_template_name='blog/_modals.html',
     header_template_name='blog/_header.html',
 )
 
@@ -102,6 +107,7 @@ BlogGridFactory = DynamicGridFactory(
     bulk_actions='_bulk_actions.html',
     item_template_name='blog/_grid_item.html',
     header_template_name='blog/_header.html',
+    modals_template_name='blog/_modals.html'
 )
 
 
