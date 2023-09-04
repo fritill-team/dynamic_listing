@@ -1,6 +1,6 @@
 # Dynamic Listing
 [![PyPI Version](https://img.shields.io/pypi/v/dynamic-listing)](https://pypi.org/project/dynamic-listing/)
-[![Documentation](https://img.shields.io/badge/documentation-ReadTheDocs-blue.svg)](https://your-package-docs-link-here.com)
+[![Documentation](https://img.shields.io/badge/documentation-ReadTheDocs-blue.svg)](https://dynamic-listing.readthedocs.io)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
 
