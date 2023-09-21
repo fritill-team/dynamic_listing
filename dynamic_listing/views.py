@@ -1,3 +1,5 @@
+from urllib.parse import parse_qs
+
 from django.views.generic import ListView
 from django_filters.views import FilterView
 
@@ -35,3 +37,18 @@ class DynamicGridView(BaseDynamicListingView, DynamicGrid):
 
 class DynamicListView(BaseDynamicListingView, DynamicList):
     pass
+
+
+class BulkActionMixin:
+    def get_actions_type_and_value(self, data):
+        if data['type'] == 'selected':
+            value = data['value'].split(',')
+        elif data['type'] == 'queryset':
+            value = parse_qs(data['value'])
+            for key in value:
+                if len(value[key]) == 1:
+                    value[key] = value[key][0]
+            value = dict(value)
+        else:
+            value = None
+        return data['type'], value

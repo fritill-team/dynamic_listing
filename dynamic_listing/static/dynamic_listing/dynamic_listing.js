@@ -170,13 +170,23 @@ var BulkActions = function () {
   function sendRequest({method, url, forceReload, callback, inputType}) {
     const headers = new Headers({
       "X-CSRFToken": csrfToken,
-      'Content-Type': 'application/json',
     });
+
+    var formData = new FormData(),
+      value = getValue(inputType)
+
+    formData.append('csrfmiddlewaretoken', csrfToken)
+
+    for (var key in value) {
+      if (value.hasOwnProperty(key)) {
+        formData.append(key, value[key])
+      }
+    }
 
     fetch(url, {
       method: method,
       headers: headers,
-      body: JSON.stringify(getValue(inputType))
+      body: formData
     })
       .then(response => {
         if (!response.ok) {
