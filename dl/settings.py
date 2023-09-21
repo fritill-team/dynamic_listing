@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'dynamic_listing',
     'blog',
     'base_template',
+    'django_filters',
 
     'django.contrib.auth',
     'django.contrib.contenttypes',

@@ -25,9 +25,19 @@ class BlogsFilter(FilterSet):
 
     created_at = django_filters.DateFromToRangeFilter()
 
+    id_range = django_filters.RangeFilter(field_name='id', label=_("ID Range"))
+
     class Meta:
         model = Blog
-        fields = ('q', 'author', 'category', 'tags', 'created_at')
+        fields = ('q', 'id_range',  'author', 'category', 'tags', 'created_at')
 
     def search(self, queryset, name, value):
         return queryset.filter(Q(title__icontains=value) | Q(content__icontains=value))
+
+
+class BlogsFilter2(django_filters.FilterSet):
+    id_range = django_filters.RangeFilter(field_name='id', label=_("ID Range"))
+
+    class Meta:
+        model = Blog
+        fields = ('id_range',)

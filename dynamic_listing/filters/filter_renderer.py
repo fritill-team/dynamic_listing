@@ -51,6 +51,7 @@ class FilterRenderer:
             renderer = self.get_filter_renderer_field(filter_field)
             try:
                 filter_renderer = renderer(
+                    name=name,
                     filter_field=filter_field,
                     form_field=self.filterset.form[name],
                     value=value,

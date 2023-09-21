@@ -33,7 +33,7 @@ class FilterFieldRenderer:
     element = None
     single = True
 
-    def __init__(self, filter_field, form_field, value, filter_type='filter'):
+    def __init__(self, name, filter_field, form_field, value, filter_type='filter'):
         """
         Initialize a new FilterFieldRenderer instance.
 
@@ -46,6 +46,7 @@ class FilterFieldRenderer:
         :param filter_type: The type of filter (default is 'filter').
         :type filter_type: str
         """
+        self.field_name = name
         self.name = filter_field.field_name
         self.filter_field = filter_field
         self.filter_type = filter_type
@@ -69,7 +70,7 @@ class FilterFieldRenderer:
         :rtype: dict
         """
         return {
-            "name": self.name,
+            "name": self.field_name,
             "value": self.get_value(),
             "label": self.filter_field.label,
             "type": self.element,
@@ -347,6 +348,53 @@ class DateFromToRangeFilterRenderer(FilterFieldRenderer):
         return f"{data.get(range_from, '')} - {data.get(range_to, '')}"
 
 
+class RangeFilterRenderer(FilterFieldRenderer):
+    template_name = 'dynamic_listing/filters/fields/range.html'
+
+    def is_hidden(self):
+        return False
+
+    def get_value(self):
+        range_min = self.field_name + '_min'
+        range_max = self.field_name + '_max'
+        value = ''
+        if self.form_field.form.data.get(range_min, None) and self.form_field.form.data.get(range_min, None):
+            value = self.form_field.form.data.get(range_min, None) + ' - ' + self.form_field.form.data.get(range_max,
+                                                                                                            None)
+        return {
+            "range_min": self.form_field.form.data.get(range_min, None),
+            "range_max": self.form_field.form.data.get(range_max, None),
+            'value': value
+        }
+
+    def is_applied(self):
+        range_min = self.field_name + '_min'
+        range_max = self.field_name + '_max'
+        data = self.form_field.form.data
+
+        return ((range_min in data and data.get(range_min is not None) \
+                or (range_max in data and data.get(range_max) is not None)))
+
+    def get_applied_filter(self):
+        range_min = self.field_name + '_min'
+        range_max = self.field_name + '_max'
+        data = self.form_field.form.data
+        return [
+            {
+                "label": self.filter_field.label,
+                "key": f"{range_min},{range_max}",
+                "value": f"{data.get(range_min, '')},{data.get(range_max, '')}",
+                "value_label": self.get_value_label(),
+            }
+        ]
+
+    def get_value_label(self):
+        range_min = self.name + '_min'
+        range_max = self.name + '_max'
+        data = self.form_field.form.data
+        return f"{data.get(range_min, '')} - {data.get(range_max, '')}"
+
+
 FIELD_RENDERER_MAP = {
     django_filters.filters.BooleanFilter: BooleanFilterFieldRenderer,
     django_filters.filters.CharFilter: CharFilterFieldRenderer,
@@ -355,6 +403,7 @@ FIELD_RENDERER_MAP = {
     django_filters.filters.ModelMultipleChoiceFilter: ModelMultipleChoiceFilterFieldRenderer,
     django_filters.filters.DateTimeFilter: DateTimeFilterFieldRenderer,
     django_filters.filters.DateFromToRangeFilter: DateFromToRangeFilterRenderer,
+    django_filters.filters.RangeFilter: RangeFilterRenderer,
     OrderingFilter: OrderingFilterRenderer,
     NumberInFilter: NumberInFilterFieldRenderer,
     RateFilter: ChoiceFilterFieldRenderer
