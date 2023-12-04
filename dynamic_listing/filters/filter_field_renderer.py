@@ -176,7 +176,7 @@ class NumberFilterFieldRenderer(FilterFieldRenderer):
 
     def get_value(self):
         return self.form_field.form.data.get(self.name) if self.name in self.form_field.form.data \
-            else 0
+            else None
 
 
 class BooleanFilterFieldRenderer(FilterFieldRenderer):
