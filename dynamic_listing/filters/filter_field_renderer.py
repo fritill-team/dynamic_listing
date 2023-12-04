@@ -147,7 +147,6 @@ class FilterFieldRenderer:
 
 
 class NumberInFilterFieldRenderer(FilterFieldRenderer):
-    template_name = 'dynamic_listing/filters/fields/input.html'
     element = 'number'
     single = True
 
@@ -163,6 +162,7 @@ class NumberInFilterFieldRenderer(FilterFieldRenderer):
 
 
 class NumberFilterFieldRenderer(FilterFieldRenderer):
+    template_name = 'dynamic_listing/filters/fields/input.html'
     element = 'number'
     single = True
 
