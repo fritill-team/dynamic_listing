@@ -161,6 +161,21 @@ class NumberInFilterFieldRenderer(FilterFieldRenderer):
             else 0
 
 
+class NumberFilterFieldRenderer(FilterFieldRenderer):
+    element = 'number'
+    single = True
+
+    def get_template_name(self):
+        return ''
+
+    def is_hidden(self):
+        return False
+
+    def get_value(self):
+        return self.form_field.form.data.get(self.name) if self.name in self.form_field.form.data \
+            else 0
+
+
 class BooleanFilterFieldRenderer(FilterFieldRenderer):
     element = 'checkbox'
     single = True
@@ -360,7 +375,7 @@ class RangeFilterRenderer(FilterFieldRenderer):
         value = ''
         if self.form_field.form.data.get(range_min, None) and self.form_field.form.data.get(range_min, None):
             value = self.form_field.form.data.get(range_min, None) + ' - ' + self.form_field.form.data.get(range_max,
-                                                                                                            None)
+                                                                                                           None)
         return {
             "range_min": self.form_field.form.data.get(range_min, None),
             "range_max": self.form_field.form.data.get(range_max, None),
@@ -373,7 +388,7 @@ class RangeFilterRenderer(FilterFieldRenderer):
         data = self.form_field.form.data
 
         return ((range_min in data and data.get(range_min is not None) \
-                or (range_max in data and data.get(range_max) is not None)))
+                 or (range_max in data and data.get(range_max) is not None)))
 
     def get_applied_filter(self):
         range_min = self.field_name + '_min'
@@ -406,5 +421,6 @@ FIELD_RENDERER_MAP = {
     django_filters.filters.RangeFilter: RangeFilterRenderer,
     OrderingFilter: OrderingFilterRenderer,
     NumberInFilter: NumberInFilterFieldRenderer,
+    django_filters.filters.NumberFilter: NumberFilterFieldRenderer,
     RateFilter: ChoiceFilterFieldRenderer
 }
