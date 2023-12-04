@@ -166,6 +166,11 @@ class NumberFilterFieldRenderer(FilterFieldRenderer):
     element = 'number'
     single = True
 
+    def get_attrs(self):
+        attrs = super().get_attrs()
+        attrs['data-instant-filter'] = "true"
+        return attrs
+
     def is_hidden(self):
         return False
 
