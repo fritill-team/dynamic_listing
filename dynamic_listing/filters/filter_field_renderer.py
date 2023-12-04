@@ -419,8 +419,8 @@ FIELD_RENDERER_MAP = {
     django_filters.filters.DateTimeFilter: DateTimeFilterFieldRenderer,
     django_filters.filters.DateFromToRangeFilter: DateFromToRangeFilterRenderer,
     django_filters.filters.RangeFilter: RangeFilterRenderer,
+    django_filters.filters.NumberFilter: NumberFilterFieldRenderer,
     OrderingFilter: OrderingFilterRenderer,
     NumberInFilter: NumberInFilterFieldRenderer,
-    django_filters.filters.NumberFilter: NumberFilterFieldRenderer,
     RateFilter: ChoiceFilterFieldRenderer
 }
