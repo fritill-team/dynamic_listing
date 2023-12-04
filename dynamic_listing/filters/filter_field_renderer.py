@@ -166,9 +166,6 @@ class NumberFilterFieldRenderer(FilterFieldRenderer):
     element = 'number'
     single = True
 
-    def get_template_name(self):
-        return ''
-
     def is_hidden(self):
         return False
 
