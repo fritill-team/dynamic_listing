@@ -27,10 +27,8 @@
 
 
 
-    {% if filter.top_right|length > 0 or bulk_actions or actions %}
+    {% if filter.top_right|length > 0 or bulk_actions %}
       <div class="d-flex" data-right-filters="true">
-
-
         {% for filter in filter.top_right %}
           {% include filter.template_name with attrs=filter.attrs %}
         {% endfor %}
@@ -62,8 +60,12 @@
       {% if bulk_actions %}
         {% include 'dynamic_listing/partials/__bulk_actions.html' %}
       {% endif %}
+    {% elif bulk_actions or actions %}
+      {% if bulk_actions %}
+        {% include 'dynamic_listing/partials/__bulk_actions.html' %}
+      {% endif %}
       {% if actions %}
-      	{% include actions %}
+        {% include actions %}
       {% endif %}
     {% endif %}
   </div>
