@@ -32,8 +32,8 @@
           {% for page_num in paginator.get_elided_page_range %}
             {% if page_number == page_obj.paginator.ELLIPSIS %}
               <li class="paginate_button page-item">
-                <a href="#" aria-controls="kt_table_users"
-                   data-dt-idx="{{ page_num }}" tabindex="0" class="page-link">{{ page_num }}</a>
+                <a href="javascript:void(0);"
+                   class="page-link">{{ page_num }}</a>
               </li>
             {% else %}
               <li class="paginate_button page-item {% if page_obj.number == page_num %} active{% endif %} ">
