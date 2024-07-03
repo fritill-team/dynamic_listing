@@ -1,3 +1,4 @@
+{% load pagination %}
 {% load i18n %}
 {% if paginator.num_pages > 1 %}
   <div class="row">
@@ -5,7 +6,8 @@
     <div
         class="col-sm-12 col-md-5 d-flex align-items-center justify-content-center justify-content-md-start">
       <p class="text-gray-700">
-        {% blocktrans with start=page_obj.start_index end=page_obj.end_index count=page_obj.paginator.count %}Showing {{ start }}-{{ end }} of total result {{ count }}{% endblocktrans %}
+        {% blocktrans with start=page_obj.start_index end=page_obj.end_index count=page_obj.paginator.count %}Showing
+          {{ start }}-{{ end }} of total result {{ count }}{% endblocktrans %}
       </p>
     </div>
     <div class="col-sm-12 col-md-7 d-flex align-items-center justify-content-center justify-content-md-end">
@@ -13,7 +15,8 @@
         <ul class="pagination">
           {% if page_obj.has_previous %}
             <li class="paginate_button page-item previous" id="kt_table_users_previous">
-              <a href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+              <a href="?page=
+                  {{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                  aria-controls="kt_table_users"
                  data-dt-idx="0"
                  tabindex="0"
@@ -28,8 +31,8 @@
                  class="page-link"><i
                   class="previous"></i></a></li>
           {% endif %}
-
-          {% for page_num in paginator.get_elided_page_range %}
+          {% get_paginated_range paginator page_obj.number as RANGE %}
+          {% for page_num in RANGE %}
             {% if page_num == page_obj.paginator.ELLIPSIS %}
               <li class="paginate_button page-item">
                 <a href="javascript:void(0);"
@@ -37,7 +40,8 @@
               </li>
             {% else %}
               <li class="paginate_button page-item {% if page_obj.number == page_num %} active{% endif %} ">
-                <a href="?page={{ page_num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+                <a href="?page=
+                    {{ page_num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                    aria-controls="kt_table_users" data-dt-idx="{{ page_num }}"
                    tabindex="0" class="page-link">{{ page_num }}</a></li>
             {% endif %}
@@ -45,7 +49,8 @@
 
           {% if page_obj.has_next %}
             <li class="paginate_button page-item next" id="kt_table_users_next">
-              <a href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+              <a href="?page=
+                  {{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
                  aria-controls="kt_table_users"
                  data-dt-idx="4" tabindex="0"
                  class="page-link"><i
