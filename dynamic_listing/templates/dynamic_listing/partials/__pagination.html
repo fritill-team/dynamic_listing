@@ -30,7 +30,7 @@
           {% endif %}
 
           {% for page_num in paginator.get_elided_page_range %}
-            {% if page_number == page_obj.paginator.ELLIPSIS %}
+            {% if page_num == page_obj.paginator.ELLIPSIS %}
               <li class="paginate_button page-item">
                 <a href="javascript:void(0);"
                    class="page-link">{{ page_num }}</a>
